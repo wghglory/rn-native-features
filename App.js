@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,10 +8,28 @@ import AddPlace from './screens/AddPlace';
 import IconButton from './components/UI/IconButton';
 import { Colors } from './constants/colors';
 import Map from './screens/Map';
+import { init } from './util/database';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useEffect(() => {
+    async function initDb() {
+      // Keep the splash screen visible while we fetch resources
+      await SplashScreen.preventAutoHideAsync();
+
+      init()
+        .then(async () => {
+          await SplashScreen.hideAsync();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+
+    initDb();
+  }, []);
+
   return (
     <>
       <StatusBar style="dark" />
